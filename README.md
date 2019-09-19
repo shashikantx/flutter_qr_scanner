@@ -114,12 +114,12 @@ from milliseconds to seconds depending on the device).
 
 ### `child`
 
-Widget that is shown on top of the QrCamera. If you give it a specific size it may cause
+Widget that is shown on top of the QRScannerCamera. If you give it a specific size it may cause
 weird issues so try not to.
 
 ### `key`
 
-Standard flutter key argument. Can be used to get QrCameraState with a GlobalKey.
+Standard flutter key argument. Can be used to get QRScannerCameraState with a GlobalKey.
 
 ### `offscreenBuilder`
 

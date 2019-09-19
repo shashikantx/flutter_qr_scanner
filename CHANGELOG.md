@@ -1,3 +1,11 @@
+## [0.0.7] - September 19, 2019
+
+* updated documentation
+
+## [0.0.6] - September 19, 2019
+
+* updated documentation
+
 ## [0.0.5] - September 19, 2019
 
 * Fixed bugs & updated documentation
