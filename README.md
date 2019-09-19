@@ -161,17 +161,8 @@ necessarily know about it.
 
 ## Contributions
 
-Anyone wanting to contribute to this project is very welcome to! I'll take a look at PR's as soon
- as I can, and any bug reports are appreciated. I've only a few devices on which to test this
- so feedback about other devices is appreciated as well.
+Any kind of contribution will be appreciated.
  
-This has been tested on:
-
-- Nexus 5x
-- Nexus 4
-- Alcatel Idol X Plus
-- Essential Phone
-- iPhone 6
 
 
 [version_badge]: https://img.shields.io/pub/v/flutter_qr_scanner.svg
