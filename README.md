@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
 The QrCodeCallback can do anything you'd like, and wil keep receiving QR codes
 until the camera is stopped.
 
-There are also optional parameters to QrCamera.
+There are also optional parameters to QRScannerCamera.
 
 ### `fit`
 
