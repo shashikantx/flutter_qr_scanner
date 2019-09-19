@@ -1,6 +1,10 @@
+## [0.0.9] - September 19, 2019
+
+* Fixed some bugs
+
 ## [0.0.8] - September 19, 2019
 
-* updated dart sdk version 2.0.0-dev
+* updated dart sdk version 2.0.0-dev.0.0
 
 ## [0.0.7] - September 19, 2019
 

@@ -2,7 +2,7 @@
 
 ![pub package][version_badge]
 
- Reads QR code and Barcode using Google's Mobile Vision API._
+ Scans QR code and Barcode using Google's Mobile Vision API
 
 ## Usage
 
@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 ```
 
-The QrCodeCallback can do anything you'd like, and wil keep receiving QR codes
+The QrCodeCallback can do anything you'd like, and wil keep receiving QR/Bar codes
 until the camera is stopped.
 
 There are also optional parameters to QRScannerCamera.
