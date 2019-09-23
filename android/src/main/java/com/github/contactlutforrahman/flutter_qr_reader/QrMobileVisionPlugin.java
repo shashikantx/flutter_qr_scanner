@@ -84,7 +84,40 @@ public class QrMobileVisionPlugin implements MethodCallHandler, QrReaderCallback
                     permissionDenied = false;
                     result.error("QRREADER_ERROR", "noPermission", null);
                 } else if (readingInstance != null) {
-                    result.error("ALREADY_RUNNING", "Start cannot be called when already running", "");
+                    stopReader();
+                    lastHeartbeatTimeout = methodCall.argument("heartbeatTimeout");
+                    Integer targetWidth = methodCall.argument("targetWidth");
+                    Integer targetHeight = methodCall.argument("targetHeight");
+                    List<String> formatStrings = methodCall.argument("formats");
+
+                    if (targetWidth == null || targetHeight == null) {
+                        result.error("INVALID_ARGUMENT", "Missing a required argument", "Expecting targetWidth, targetHeight, and optionally heartbeatTimeout");
+                        break;
+                    }
+
+                    int barcodeFormats = BarcodeFormats.intFromStringList(formatStrings);
+
+                    TextureRegistry.SurfaceTextureEntry textureEntry = textures.createSurfaceTexture();
+                    QrReader reader = new QrReader(targetWidth, targetHeight, context, barcodeFormats,
+                        this, this, textureEntry.surfaceTexture());
+
+                    readingInstance = new ReadingInstance(reader, textureEntry, result);
+                    try {
+                        reader.start(
+                            lastHeartbeatTimeout == null ? 0 : lastHeartbeatTimeout
+                        );
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        result.error("IOException", "Error starting camera because of IOException: " + e.getLocalizedMessage(), null);
+                    } catch (QrReader.Exception e) {
+                        e.printStackTrace();
+                        result.error(e.reason().name(), "Error starting camera for reason: " + e.reason().name(), null);
+                    } catch (NoPermissionException e) {
+                        waitingForPermissionResult = true;
+                        ActivityCompat.requestPermissions(context,
+                            new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
+                    }
+
                 } else {
                     lastHeartbeatTimeout = methodCall.argument("heartbeatTimeout");
                     Integer targetWidth = methodCall.argument("targetWidth");

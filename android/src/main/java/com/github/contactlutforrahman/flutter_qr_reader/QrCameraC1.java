@@ -34,6 +34,7 @@ class QrCameraC1 implements QrCamera {
 
     @Override
     public void start() throws QrReader.Exception {
+        
         int numberOfCameras = Camera.getNumberOfCameras();
         info = new Camera.CameraInfo();
         for (int i = 0; i < numberOfCameras; i++) {
