@@ -21,11 +21,11 @@ import java.util.Map;
 
 
 /**
- * QrMobileVisionPlugin
+ * FlutterQrScannerPlugin
  */
-public class QrMobileVisionPlugin implements MethodCallHandler, QrReaderCallbacks, QrReader.QRReaderStartedCallback, PluginRegistry.RequestPermissionsResultListener {
+public class FlutterQrScannerPlugin implements MethodCallHandler, QrReaderCallbacks, QrReader.QRReaderStartedCallback, PluginRegistry.RequestPermissionsResultListener {
 
-    private static final String TAG = "cgl.fqs.QrMobileVisionPlugin";
+    private static final String TAG = "cgl.fqs.FlutterQrScannerPlugin";
     private static final int REQUEST_PERMISSION = 1;
     private final MethodChannel channel;
     private final Activity context;
@@ -35,7 +35,7 @@ public class QrMobileVisionPlugin implements MethodCallHandler, QrReaderCallback
     private boolean permissionDenied;
     private ReadingInstance readingInstance;
 
-    public QrMobileVisionPlugin(MethodChannel channel, Activity context, TextureRegistry textures) {
+    public FlutterQrScannerPlugin(MethodChannel channel, Activity context, TextureRegistry textures) {
         this.textures = textures;
         this.channel = channel;
         this.context = context;
@@ -46,9 +46,9 @@ public class QrMobileVisionPlugin implements MethodCallHandler, QrReaderCallback
      */
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "com.github.contactlutforrahman/flutter_qr_scanner");
-        QrMobileVisionPlugin qrMobileVisionPlugin = new QrMobileVisionPlugin(channel, registrar.activity(), registrar.textures());
-        channel.setMethodCallHandler(qrMobileVisionPlugin);
-        registrar.addRequestPermissionsResultListener(qrMobileVisionPlugin);
+        FlutterQrScannerPlugin FlutterQrScannerPlugin = new FlutterQrScannerPlugin(channel, registrar.activity(), registrar.textures());
+        channel.setMethodCallHandler(FlutterQrScannerPlugin);
+        registrar.addRequestPermissionsResultListener(FlutterQrScannerPlugin);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class QrMobileVisionPlugin implements MethodCallHandler, QrReaderCallback
                     permissionDenied = false;
                     result.error("QRREADER_ERROR", "noPermission", null);
                 } else if (readingInstance != null) {
-                    stopReader();
+                    // result.error("ALREADY_RUNNING", "Start cannot be called when already running", "");
                     lastHeartbeatTimeout = methodCall.argument("heartbeatTimeout");
                     Integer targetWidth = methodCall.argument("targetWidth");
                     Integer targetHeight = methodCall.argument("targetHeight");
@@ -117,7 +117,6 @@ public class QrMobileVisionPlugin implements MethodCallHandler, QrReaderCallback
                         ActivityCompat.requestPermissions(context,
                             new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
                     }
-
                 } else {
                     lastHeartbeatTimeout = methodCall.argument("heartbeatTimeout");
                     Integer targetWidth = methodCall.argument("targetWidth");
@@ -202,7 +201,7 @@ public class QrMobileVisionPlugin implements MethodCallHandler, QrReaderCallback
 
     @Override
     public void startingFailed(Throwable t) {
-        Log.w(TAG, "Starting QR Mobile Vision failed", t);
+        Log.w(TAG, "Starting Flutter Qr Scanner failed", t);
         List<String> stackTraceStrings = stackTraceAsString(t.getStackTrace());
 
         if (t instanceof QrReader.Exception) {

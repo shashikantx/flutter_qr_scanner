@@ -1,3 +1,11 @@
+## [0.1.2] - September 23, 2019
+
+* Fixed native_device_orientation issue
+
+## [0.1.1] - September 23, 2019
+
+* Fixed reload camera issue
+
 ## [0.1.0] - September 19, 2019
 
 * DART 2 COMPATIBLE

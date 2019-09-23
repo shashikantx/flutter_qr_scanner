@@ -1,6 +1,6 @@
 @import AVFoundation;
 
-#import "QrMobileVisionPlugin.h"
+#import "FlutterQrScannerPlugin.h"
 #import <libkern/OSAtomic.h>
 #import "GoogleMobileVision/GoogleMobileVision.h"
 
@@ -176,20 +176,20 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 @end
 
 
-@interface QrMobileVisionPlugin ()
+@interface FlutterQrScannerPlugin ()
 @property(readonly, nonatomic) NSObject<FlutterTextureRegistry> *registry;
 @property(readonly, nonatomic) FlutterMethodChannel *channel;
 
 @property(readonly, nonatomic) QrReader *reader;
 @end
 
-@implementation QrMobileVisionPlugin
+@implementation FlutterQrScannerPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
                                      methodChannelWithName:@"com.github.contactlutforrahman/flutter_qr_scanner"
                                      binaryMessenger:[registrar messenger]];
-    QrMobileVisionPlugin* instance = [[QrMobileVisionPlugin alloc] initWithRegistry:[registrar textures] channel:channel];
+    FlutterQrScannerPlugin* instance = [[FlutterQrScannerPlugin alloc] initWithRegistry:[registrar textures] channel:channel];
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 
