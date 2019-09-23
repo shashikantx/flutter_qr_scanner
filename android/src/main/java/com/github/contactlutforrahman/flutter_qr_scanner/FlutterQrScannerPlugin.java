@@ -84,6 +84,7 @@ public class FlutterQrScannerPlugin implements MethodCallHandler, QrReaderCallba
                     permissionDenied = false;
                     result.error("QRREADER_ERROR", "noPermission", null);
                 } else if (readingInstance != null) {
+                    stopReader();
                     // result.error("ALREADY_RUNNING", "Start cannot be called when already running", "");
                     lastHeartbeatTimeout = methodCall.argument("heartbeatTimeout");
                     Integer targetWidth = methodCall.argument("targetWidth");
