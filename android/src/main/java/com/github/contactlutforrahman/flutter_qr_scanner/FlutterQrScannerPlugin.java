@@ -46,7 +46,7 @@ public class FlutterQrScannerPlugin implements MethodCallHandler, QrReaderCallba
      */
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "com.github.contactlutforrahman/flutter_qr_scanner");
-        FlutterQrScannerPlugin flutterQrScannerPlugin = new flutterQrScannerPlugin(channel, registrar.activity(), registrar.textures());
+        FlutterQrScannerPlugin flutterQrScannerPlugin = new FlutterQrScannerPlugin(channel, registrar.activity(), registrar.textures());
         channel.setMethodCallHandler(flutterQrScannerPlugin);
         registrar.addRequestPermissionsResultListener(flutterQrScannerPlugin);
     }
