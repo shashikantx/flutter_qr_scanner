@@ -46,9 +46,9 @@ public class FlutterQrScannerPlugin implements MethodCallHandler, QrReaderCallba
      */
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "com.github.contactlutforrahman/flutter_qr_scanner");
-        FlutterQrScannerPlugin FlutterQrScannerPlugin = new FlutterQrScannerPlugin(channel, registrar.activity(), registrar.textures());
-        channel.setMethodCallHandler(FlutterQrScannerPlugin);
-        registrar.addRequestPermissionsResultListener(FlutterQrScannerPlugin);
+        FlutterQrScannerPlugin flutterQrScannerPlugin = new flutterQrScannerPlugin(channel, registrar.activity(), registrar.textures());
+        channel.setMethodCallHandler(flutterQrScannerPlugin);
+        registrar.addRequestPermissionsResultListener(flutterQrScannerPlugin);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class FlutterQrScannerPlugin implements MethodCallHandler, QrReaderCallba
                     permissionDenied = false;
                     result.error("QRREADER_ERROR", "noPermission", null);
                 } else if (readingInstance != null) {
-                    stopReader();
+                    // stopReader();
                     // result.error("ALREADY_RUNNING", "Start cannot be called when already running", "");
                     lastHeartbeatTimeout = methodCall.argument("heartbeatTimeout");
                     Integer targetWidth = methodCall.argument("targetWidth");

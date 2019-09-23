@@ -34,12 +34,13 @@ class QrCameraC1 implements QrCamera {
 
     @Override
     public void start() throws QrReader.Exception {
-        
+    
         int numberOfCameras = Camera.getNumberOfCameras();
         info = new Camera.CameraInfo();
         for (int i = 0; i < numberOfCameras; i++) {
             Camera.getCameraInfo(i, info);
             if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+
                 camera = Camera.open(i);
                 break;
             }
@@ -75,7 +76,6 @@ class QrCameraC1 implements QrCamera {
                     if (data != null) {
                         detector.detect(data, previewSize.width, previewSize.height, IMAGEFORMAT);
                     } else {
-                        //TODO: something better here?
                         System.out.println("It's NULL!");
                     }
                 }

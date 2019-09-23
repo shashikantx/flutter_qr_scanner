@@ -1,3 +1,11 @@
+## [0.1.4] - September 23, 2019
+
+* Fixed bugs
+
+## [0.1.3] - September 23, 2019
+
+* Fixed bugs
+
 ## [0.1.2] - September 23, 2019
 
 * Fixed native_device_orientation issue
