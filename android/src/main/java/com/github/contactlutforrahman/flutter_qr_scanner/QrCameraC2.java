@@ -30,6 +30,8 @@ import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_AUTO;
 import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE;
 import static android.hardware.camera2.CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_VIDEO;
 import static android.hardware.camera2.CameraMetadata.LENS_FACING_BACK;
+import static android.hardware.camera2.CameraMetadata.LENS_FACING_FRONT;
+import static android.hardware.camera2.CameraMetadata.LENS_FACING_EXTERNAL;
 
 /**
  * Implements QrCamera using Camera2 API
@@ -60,13 +62,15 @@ class QrCameraC2 implements QrCamera {
     private int orientation;
     private CameraDevice cameraDevice;
     private CameraCharacteristics cameraCharacteristics;
+    private CameraLensDirection cameraLensDirection;
 
-    QrCameraC2(int width, int height, Context context, SurfaceTexture texture, QrDetector2 detector) {
+    QrCameraC2(int width, int height, Context context, SurfaceTexture texture, QrDetector2 detector, CameraLensDirection cameraLensDirection) {
         this.targetWidth = width;
         this.targetHeight = height;
         this.context = context;
         this.texture = texture;
         this.detector = detector;
+        this.cameraLensDirection = cameraLensDirection;
     }
 
     @Override
@@ -98,7 +102,10 @@ class QrCameraC2 implements QrCamera {
             for (String id : cameraIdList) {
                 CameraCharacteristics cameraCharacteristics = manager.getCameraCharacteristics(id);
                 Integer integer = cameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
-                if (integer != null && integer == LENS_FACING_BACK) {
+                if (integer != null && integer == LENS_FACING_FRONT && cameraLensDirection.getValue().equals(CameraLensDirection.Front.getValue())) {
+                    cameraId = id;
+                    break;
+                } else if (integer != null && integer == LENS_FACING_BACK && cameraLensDirection.getValue().equals(CameraLensDirection.Back.getValue())) {
                     cameraId = id;
                     break;
                 }

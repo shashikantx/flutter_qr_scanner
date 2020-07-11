@@ -18,14 +18,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Allows QrCamera classes to send frames to a Detector
  */
 
-class QrDetector {
+public class QrDetector {
     private static final String TAG = "cgl.fqs.QrDetector";
     private final QrReaderCallbacks communicator;
     private final Detector<Barcode> detector;
     private AtomicInteger atomicCounter = new AtomicInteger();
     private boolean isNV21 = false;
 
-    QrDetector(QrReaderCallbacks communicator, Context context, int formats) {
+    public QrDetector(QrReaderCallbacks communicator, Context context, int formats) {
         this.communicator = communicator;
         this.detector = new BarcodeDetector.Builder(context.getApplicationContext()).setBarcodeFormats(formats).build();
     }

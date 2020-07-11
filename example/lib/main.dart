@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_qr_scanner/qr_scanner_camera.dart';
+import 'package:flutter_qr_scanner/camera_lens_direction.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,6 +30,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String _qrInfo = 'Scan a QR/Bar code';
   bool _camState = false;
+  bool _isBackLens = true;
+  QrReaderController _qrReaderController = QrReaderController();
 
   _qrCallback(String code) {
     setState(() {
@@ -58,7 +61,24 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: Text(widget.title),
+        actions: [
+          Switch(
+              activeTrackColor: Colors.white,
+              value: _isBackLens,
+              onChanged: (val) async {
+                setState(() {
+                  _qrReaderController.start();
+                });
+                setState(() {
+                  _isBackLens = !_isBackLens;
+                });
+                setState(() {
+                  _qrReaderController.restart();
+                });
+              })
+        ],
       ),
       body: _camState
           ? Center(
@@ -73,6 +93,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   qrCodeCallback: (code) {
                     _qrCallback(code);
                   },
+                  cameraLensDirection: _isBackLens
+                      ? CameraLensDirection.back
+                      : CameraLensDirection.front,
+                  controller: _qrReaderController,
                 ),
               ),
             )

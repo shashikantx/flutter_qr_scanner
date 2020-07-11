@@ -7,6 +7,8 @@ import 'package:flutter/rendering.dart';
 import 'package:native_device_orientation/native_device_orientation.dart';
 import 'package:flutter_qr_scanner/flutter_qr_scanner.dart';
 
+import 'camera_lens_direction.dart';
+
 final WidgetBuilder _defaultNotStartedBuilder = (context) => new Text("Loading Scanner Camera...");
 final WidgetBuilder _defaultOffscreenBuilder = (context) => new Text("Scanner Camera Paused.");
 final ErrorCallback _defaultOnError = (BuildContext context, Object error) {
@@ -20,12 +22,14 @@ class QRScannerCamera extends StatefulWidget {
   QRScannerCamera({
     Key key,
     @required this.qrCodeCallback,
+    @required this.cameraLensDirection,
     this.child,
     this.fit = BoxFit.cover,
     WidgetBuilder notStartedBuilder,
     WidgetBuilder offscreenBuilder,
     ErrorCallback onError,
     this.formats,
+    this.controller
   })  : notStartedBuilder = notStartedBuilder ?? _defaultNotStartedBuilder,
         offscreenBuilder = offscreenBuilder ?? notStartedBuilder ?? _defaultOffscreenBuilder,
         onError = onError ?? _defaultOnError,
@@ -39,6 +43,8 @@ class QRScannerCamera extends StatefulWidget {
   final WidgetBuilder offscreenBuilder;
   final ErrorCallback onError;
   final List<BarcodeFormats> formats;
+  final CameraLensDirection cameraLensDirection;
+  final QrReaderController controller;
 
   @override
   QRScannerCameraState createState() => new QRScannerCameraState();
@@ -49,6 +55,7 @@ class QRScannerCameraState extends State<QRScannerCamera> with WidgetsBindingObs
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    widget.controller.setState(this);
   }
 
   @override
@@ -81,6 +88,7 @@ class QRScannerCameraState extends State<QRScannerCamera> with WidgetsBindingObs
       width: width.toInt(),
       qrCodeHandler: widget.qrCodeCallback,
       formats: widget.formats,
+      cameraLensDirection: widget.cameraLensDirection
     );
     return previewDetails;
   }
@@ -228,4 +236,15 @@ class Preview extends StatelessWidget {
       },
     );
   }
+}
+
+class QrReaderController {
+  QRScannerCameraState _state;
+
+  QrReaderController();
+
+  void setState(QRScannerCameraState state) => this._state = state;
+  
+  start() => _state?.stop();
+  restart() => _state?.restart();
 }

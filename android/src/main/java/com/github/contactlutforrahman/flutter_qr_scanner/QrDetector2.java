@@ -24,7 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Allows QrCamera classes to send frames to a Detector
  */
 @TargetApi(21)
-class QrDetector2 {
+public class QrDetector2 {
     private static final String TAG = "cgl.fqs.QrDetector";
     private final QrReaderCallbacks communicator;
     private final Detector<Barcode> detector;
@@ -39,7 +39,7 @@ class QrDetector2 {
     private QrImage imageToCheck = new QrImage();
     private QrImage nextImage = new QrImage();
 
-    QrDetector2(QrReaderCallbacks communicator, Context context, int formats) {
+    public QrDetector2(QrReaderCallbacks communicator, Context context, int formats) {
         Log.i(TAG, "Making detector2 for formats: " + formats);
         this.communicator = communicator;
         this.detector = new BarcodeDetector.Builder(context.getApplicationContext()).setBarcodeFormats(formats).build();

@@ -24,12 +24,14 @@ class QrCameraC1 implements QrCamera {
     private Camera.CameraInfo info = new Camera.CameraInfo();
     private int targetWidth, targetHeight;
     private Camera camera = null;
+    private CameraLensDirection cameraLensDirection;
 
-    QrCameraC1(int width, int height, SurfaceTexture texture, QrDetector detector) {
+    QrCameraC1(int width, int height, SurfaceTexture texture, QrDetector detector, CameraLensDirection cameraLensDirection) {
         this.texture = texture;
         targetHeight = height;
         targetWidth = width;
         this.detector = detector;
+        this.cameraLensDirection = cameraLensDirection;
     }
 
     @Override
@@ -39,8 +41,10 @@ class QrCameraC1 implements QrCamera {
         info = new Camera.CameraInfo();
         for (int i = 0; i < numberOfCameras; i++) {
             Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK && cameraLensDirection.getValue().equals(CameraLensDirection.Back.getValue())) {
+                camera = Camera.open(i);
+                break;
+            } else if(info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT && cameraLensDirection.getValue().equals(CameraLensDirection.Front.getValue())){
                 camera = Camera.open(i);
                 break;
             }

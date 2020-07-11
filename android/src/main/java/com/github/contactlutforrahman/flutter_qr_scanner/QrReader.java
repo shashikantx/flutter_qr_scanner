@@ -7,29 +7,30 @@ import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.util.Log;
 import com.google.android.gms.vision.CameraSource;
+import com.github.contactlutforrahman.flutter_qr_scanner.*;
 
 import java.io.IOException;
 
-class QrReader {
+public class QrReader {
     private static final String TAG = "cgl.fqs.QrReader";
     final QrCamera qrCamera;
     private final Activity context;
-    private final QRReaderStartedCallback startedCallback;
+    private QRReaderStartedCallback startedCallback;
     private Heartbeat heartbeat;
     private CameraSource camera;
 
-    QrReader(int width, int height, Activity context, int barcodeFormats,
+    public QrReader(int width, int height, Activity context, int barcodeFormats,
              final QRReaderStartedCallback startedCallback, final QrReaderCallbacks communicator,
-             final SurfaceTexture texture) {
+             final SurfaceTexture texture, final CameraLensDirection cameraLensDirection) {
         this.context = context;
         this.startedCallback = startedCallback;
 
         if (android.os.Build.VERSION.SDK_INT >= 21) {
             Log.i(TAG, "Using new camera API.");
-            qrCamera = new QrCameraC2(width, height, context, texture, new QrDetector2(communicator, context, barcodeFormats));
+            qrCamera = new QrCameraC2(width, height, context, texture, new QrDetector2(communicator, context, barcodeFormats), cameraLensDirection);
         } else {
             Log.i(TAG, "Using old camera API.");
-            qrCamera = new QrCameraC1(width, height, texture, new QrDetector(communicator, context, barcodeFormats));
+            qrCamera = new QrCameraC1(width, height, texture, new QrDetector(communicator, context, barcodeFormats), cameraLensDirection);
         }
     }
 

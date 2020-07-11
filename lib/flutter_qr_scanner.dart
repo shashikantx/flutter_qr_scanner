@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import 'camera_lens_direction.dart';
+
 class PreviewDetails {
   num height;
   num width;
@@ -10,6 +12,15 @@ class PreviewDetails {
   int textureId;
 
   PreviewDetails(this.height, this.width, this.orientation, this.textureId);
+}
+
+_cameraLensDirectionToString(CameraLensDirection cameraLensDirection) {
+  switch(cameraLensDirection){
+    case CameraLensDirection.front : return "front";
+    case CameraLensDirection.back : return "back";
+    case CameraLensDirection.external : return "external";
+    default : return "back";
+  }
 }
 
 enum BarcodeFormats {
@@ -35,12 +46,14 @@ const _defaultBarcodeFormats = const [
 
 class FlutterQrReader {
   static const MethodChannel _channel = const MethodChannel('com.github.contactlutforrahman/flutter_qr_scanner');
-  static QrChannelReader channelReader = new QrChannelReader(_channel);
+  static QrChannelReader channelReader = new QrChannelReader(_channel);  
+
   //Set target size before starting
   static Future<PreviewDetails> start({
     @required int height,
     @required int width,
     @required QRCodeHandler qrCodeHandler,
+    @required CameraLensDirection cameraLensDirection,
     List<BarcodeFormats> formats = _defaultBarcodeFormats,
   }) async {
     final _formats = formats ?? _defaultBarcodeFormats;
@@ -50,7 +63,7 @@ class FlutterQrReader {
 
     channelReader.setQrCodeHandler(qrCodeHandler);
     var details = await _channel.invokeMethod(
-        'start', {'targetHeight': height, 'targetWidth': width, 'heartbeatTimeout': 0, 'formats': formatStrings});
+        'start', {'targetHeight': height, 'targetWidth': width, 'heartbeatTimeout': 0, 'formats': formatStrings, 'cameraLensDirection' : _cameraLensDirectionToString(cameraLensDirection) });
 
     // invokeMethod returns Map<dynamic,...> in dart 2.0
     assert(details is Map<dynamic, dynamic>);
@@ -59,6 +72,7 @@ class FlutterQrReader {
     num orientation = details["surfaceOrientation"];
     num surfaceHeight = details["surfaceHeight"];
     num surfaceWidth = details["surfaceWidth"];
+
 
     return new PreviewDetails(surfaceHeight, surfaceWidth, orientation, textureId);
   }
