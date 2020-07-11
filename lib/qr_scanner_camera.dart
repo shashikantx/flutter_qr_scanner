@@ -55,7 +55,7 @@ class QRScannerCameraState extends State<QRScannerCamera> with WidgetsBindingObs
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    widget.controller.setState(this);
+    widget.controller?.setState(this);
   }
 
   @override
