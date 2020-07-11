@@ -245,6 +245,6 @@ class QrReaderController {
 
   void setState(QRScannerCameraState state) => this._state = state;
   
-  start() => _state?.stop();
+  stop() => _state?.stop();
   restart() => _state?.restart();
 }

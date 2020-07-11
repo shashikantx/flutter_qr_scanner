@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
               value: _isBackLens,
               onChanged: (val) async {
                 setState(() {
-                  _qrReaderController.start();
+                  _qrReaderController.stop();
                 });
                 setState(() {
                   _isBackLens = !_isBackLens;
