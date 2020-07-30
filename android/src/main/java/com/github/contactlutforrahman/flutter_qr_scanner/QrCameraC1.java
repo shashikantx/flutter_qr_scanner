@@ -5,7 +5,9 @@ import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
+import android.hardware.camera2.CameraCharacteristics;
 import android.util.Log;
+import android.util.Range;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,16 +45,20 @@ class QrCameraC1 implements QrCamera {
             Camera.getCameraInfo(i, info);
             if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK && cameraLensDirection.getValue().equals(CameraLensDirection.Back.getValue())) {
                 camera = Camera.open(i);
+                if (camera == null) {
+                    throw new QrReader.Exception(QrReader.Exception.Reason.noBackCamera);
+                }
                 break;
             } else if(info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT && cameraLensDirection.getValue().equals(CameraLensDirection.Front.getValue())){
                 camera = Camera.open(i);
+                if (camera == null) {
+                    throw new QrReader.Exception(QrReader.Exception.Reason.noFrontCamera);
+                }
                 break;
             }
         }
 
-        if (camera == null) {
-            throw new QrReader.Exception(QrReader.Exception.Reason.noBackCamera);
-        }
+
 
         final Camera.Parameters parameters = camera.getParameters();
 
@@ -60,6 +66,9 @@ class QrCameraC1 implements QrCamera {
         if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
             Log.i(TAG, "Initializing with autofocus on.");
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            parameters.setPreviewFpsRange(Camera.Parameters.PREVIEW_FPS_MIN_INDEX, 7);
+            parameters.setPreviewFpsRange(Camera.Parameters.PREVIEW_FPS_MAX_INDEX, 15);
+
         } else {
             Log.i(TAG, "Initializing with autofocus off as not supported.");
         }
@@ -166,4 +175,5 @@ class QrCameraC1 implements QrCamera {
         }
         return s;
     }
+
 }

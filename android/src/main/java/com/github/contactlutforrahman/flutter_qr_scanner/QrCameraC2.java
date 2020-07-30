@@ -16,6 +16,7 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.util.Log;
+import android.util.Range;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
@@ -104,9 +105,15 @@ class QrCameraC2 implements QrCamera {
                 Integer integer = cameraCharacteristics.get(CameraCharacteristics.LENS_FACING);
                 if (integer != null && integer == LENS_FACING_FRONT && cameraLensDirection.getValue().equals(CameraLensDirection.Front.getValue())) {
                     cameraId = id;
+                    if (cameraId == null) {
+                        throw new QrReader.Exception(QrReader.Exception.Reason.noFrontCamera);
+                    }
                     break;
                 } else if (integer != null && integer == LENS_FACING_BACK && cameraLensDirection.getValue().equals(CameraLensDirection.Back.getValue())) {
                     cameraId = id;
+                    if (cameraId == null) {
+                        throw new QrReader.Exception(QrReader.Exception.Reason.noBackCamera);
+                    }
                     break;
                 }
             }
@@ -115,9 +122,6 @@ class QrCameraC2 implements QrCamera {
             throw new RuntimeException(e);
         }
 
-        if (cameraId == null) {
-            throw new QrReader.Exception(QrReader.Exception.Reason.noBackCamera);
-        }
 
         try {
             cameraCharacteristics = manager.getCameraCharacteristics(cameraId);
@@ -174,6 +178,39 @@ class QrCameraC2 implements QrCamera {
         }
     }
 
+    private Range<Integer> getRange(CameraCharacteristics cameraCharacteristics) {
+
+            Range<Integer>[] ranges = cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
+            Range<Integer> result = null;
+            for (Range<Integer> range : ranges) {
+                int upper = range.getUpper();
+                int lower = range.getLower();
+                // 10 - min range upper for my needs
+                Log.e("Upper fps :",""+upper);
+                Log.e("range fps :",""+range);
+                if (upper >= 10000) {
+                    if (result == null || upper < result.getUpper().intValue()) {
+                        result = new Range<>(range.getLower()/1000,range.getLower()/1000);
+                        Log.e("result fps :",""+range);
+                        break;
+                    }
+                }
+                if (upper >= 10) {
+                    if (result == null || upper < result.getUpper().intValue()) {
+                        result = range;
+                        Log.e("result fps :",""+range);
+                        break;
+                    }
+                }
+            }
+            if (result == null) {
+                result = ranges[0];
+                Log.e("result in range[0] is :",""+result);
+            }
+            return result;
+
+    }
+
     private void startCamera() {
         List<Surface> list = new ArrayList<>();
 
@@ -208,6 +245,7 @@ class QrCameraC2 implements QrCamera {
             Integer afMode = afMode(cameraCharacteristics);
 
             previewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+            previewBuilder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, getRange(cameraCharacteristics));
 
             if (afMode != null) {
                 previewBuilder.set(CaptureRequest.CONTROL_AF_MODE, afMode);
