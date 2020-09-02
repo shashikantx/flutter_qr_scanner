@@ -76,78 +76,12 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler, Qr
                     permissionDenied = false;
                     result.error("QRREADER_ERROR", "noPermission", null);
                 } else if (readingInstance != null) {
-                    // stopReader();
-                    // result.error("ALREADY_RUNNING", "Start cannot be called when already running", "");
-                    lastHeartbeatTimeout = methodCall.argument("heartbeatTimeout");
-                    Integer targetWidth = methodCall.argument("targetWidth");
-                    Integer targetHeight = methodCall.argument("targetHeight");
-                    List<String> formatStrings = methodCall.argument("formats");
-                    String cameraLensDirectionString = methodCall.argument("cameraLensDirection");
-                    CameraLensDirection cameraLensDirection = CameraLensDirection.get(cameraLensDirectionString);
+                     stopReader();
+//                     result.error("ALREADY_RUNNING", "Start cannot be called when already running", "");
+                    initiateCamera(methodCall, result);
 
-
-                    if (targetWidth == null || targetHeight == null) {
-                        result.error("INVALID_ARGUMENT", "Missing a required argument", "Expecting targetWidth, targetHeight, and optionally heartbeatTimeout");
-                        break;
-                    }
-
-                    int barcodeFormats = BarcodeFormats.intFromStringList(formatStrings);
-
-                    TextureRegistry.SurfaceTextureEntry textureEntry = textureRegistry.createSurfaceTexture();
-                    QrReader reader = new QrReader(targetWidth, targetHeight, activity, barcodeFormats,
-                        this, this, textureEntry.surfaceTexture(), cameraLensDirection);
-
-                    readingInstance = new ReadingInstance(reader, textureEntry, result);
-                    try {
-                        reader.start(
-                            lastHeartbeatTimeout == null ? 0 : lastHeartbeatTimeout
-                        );
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        result.error("IOException", "Error starting camera because of IOException: " + e.getLocalizedMessage(), null);
-                    } catch (QrReader.Exception e) {
-                        e.printStackTrace();
-                        result.error(e.reason().name(), "Error starting camera for reason: " + e.reason().name(), null);
-                    } catch (NoPermissionException e) {
-                        waitingForPermissionResult = true;
-                        ActivityCompat.requestPermissions(activity,
-                            new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
-                    }
                 } else {
-                    lastHeartbeatTimeout = methodCall.argument("heartbeatTimeout");
-                    Integer targetWidth = methodCall.argument("targetWidth");
-                    Integer targetHeight = methodCall.argument("targetHeight");
-                    List<String> formatStrings = methodCall.argument("formats");
-                    String cameraLensDirectionString = methodCall.argument("cameraLensDirection");
-                    CameraLensDirection cameraLensDirection = CameraLensDirection.get(cameraLensDirectionString);
-
-                    if (targetWidth == null || targetHeight == null) {
-                        result.error("INVALID_ARGUMENT", "Missing a required argument", "Expecting targetWidth, targetHeight, and optionally heartbeatTimeout");
-                        break;
-                    }
-
-                    int barcodeFormats = BarcodeFormats.intFromStringList(formatStrings);
-
-                    TextureRegistry.SurfaceTextureEntry textureEntry = textureRegistry.createSurfaceTexture();
-                    QrReader reader = new QrReader(targetWidth, targetHeight, activity, barcodeFormats,
-                        this, this, textureEntry.surfaceTexture(), cameraLensDirection);
-
-                    readingInstance = new ReadingInstance(reader, textureEntry, result);
-                    try {
-                        reader.start(
-                            lastHeartbeatTimeout == null ? 0 : lastHeartbeatTimeout
-                        );
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        result.error("IOException", "Error starting camera because of IOException: " + e.getLocalizedMessage(), null);
-                    } catch (QrReader.Exception e) {
-                        e.printStackTrace();
-                        result.error(e.reason().name(), "Error starting camera for reason: " + e.reason().name(), null);
-                    } catch (NoPermissionException e) {
-                        waitingForPermissionResult = true;
-                        ActivityCompat.requestPermissions(activity,
-                            new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
-                    }
+                    initiateCamera(methodCall, result);
                 }
                 break;
             }
@@ -169,6 +103,47 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler, Qr
                 result.notImplemented();
         }
     }
+
+    void initiateCamera(@NonNull MethodCall methodCall, @NonNull final Result result){
+
+        lastHeartbeatTimeout = methodCall.argument("heartbeatTimeout");
+        Integer targetWidth = methodCall.argument("targetWidth");
+        Integer targetHeight = methodCall.argument("targetHeight");
+        List<String> formatStrings = methodCall.argument("formats");
+        String cameraLensDirectionString = methodCall.argument("cameraLensDirection");
+        CameraLensDirection cameraLensDirection = CameraLensDirection.get(cameraLensDirectionString);
+
+
+        if (targetWidth == null || targetHeight == null) {
+            result.error("INVALID_ARGUMENT", "Missing a required argument", "Expecting targetWidth, targetHeight, and optionally heartbeatTimeout");
+            return;
+        }
+
+        int barcodeFormats = BarcodeFormats.intFromStringList(formatStrings);
+
+        TextureRegistry.SurfaceTextureEntry textureEntry = textureRegistry.createSurfaceTexture();
+        QrReader reader = new QrReader(targetWidth, targetHeight, activity, barcodeFormats,
+            this, this, textureEntry.surfaceTexture(), cameraLensDirection);
+
+        readingInstance = new ReadingInstance(reader, textureEntry, result);
+        try {
+            reader.start(
+                lastHeartbeatTimeout == null ? 0 : lastHeartbeatTimeout
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+            result.error("IOException", "Error starting camera because of IOException: " + e.getLocalizedMessage(), null);
+        } catch (QrReader.Exception e) {
+            e.printStackTrace();
+            result.error(e.reason().name(), "Error starting camera for reason: " + e.reason().name(), null);
+        } catch (NoPermissionException e) {
+            waitingForPermissionResult = true;
+            ActivityCompat.requestPermissions(activity,
+                new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
+        }
+
+    }
+
 
     void stopListening() {
         methodChannel.setMethodCallHandler(null);
